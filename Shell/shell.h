@@ -35,8 +35,10 @@
 
 	typedef struct user
     {
-        char user[MAX_INPUT_LENGTH];
-        char pass[MAX_INPUT_LENGTH];
+        char userName[MAX_INPUT_LENGTH];
+        char password[MAX_INPUT_LENGTH];
+        int userColor;
+        int directoryColor;
     } user;
 
 	typedef enum command

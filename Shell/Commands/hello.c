@@ -6,8 +6,9 @@
 //	Last Edited By: Giancarlo Guillen (6/9/2020)
 #include <stdio.h>
 
-int main()
+int main(int argv, char **argc)
 {
-    fprintf(stdout,"Hello there, good fellow! Welcome to PegasOS!\n");
+    //printf("check |%s|",argc[2]);
+    fprintf(stdout,"Hello there, %s! Welcome to PegasOS!\n",argc[2]);
     return 1;
 }

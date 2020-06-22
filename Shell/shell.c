@@ -8,7 +8,11 @@
 
 char buffer[MAX_INPUT_LENGTH], argument[MAX_INPUT_LENGTH];
 char userName[256]="GCGuillen";
+char separator='@';
+// Default User will be 0
+int currentUserIndex=1;
 //strcpy(userName,"GCGuillen");
+
 
 // This simply creates the initial CLI screen.
 void createShellPrompt()
@@ -31,12 +35,19 @@ char* getNextCommand()
     return buffer;
 }
 // This Function will display where in the system the user is in.
-void printUserLine()
+void printUserLine(user *temp)
 {
     char directory[MAX_DIRECTORY_LENGTH], commandLine[MAX_DIRECTORY_LENGTH];
     if (getcwd(directory, sizeof(directory)) != NULL)
     {
-       fprintf(stdout,"%s~%s$ ",userName,directory);
+        //fprintf(stdout,"%s@%s$ ",temp->userName,directory);
+        fprintf(stdout,"\033[38;5;%im", temp->userColor);
+        fprintf(stdout,"%s", temp->userName);
+        fprintf(stdout,"\033[0m");
+        fprintf(stdout,"%c", separator);
+        fprintf(stdout,"\033[38;5;%im", temp->directoryColor);
+        fprintf(stdout,"%s: ", directory);
+        fprintf(stdout,"\033[0m");
     } 
     else 
     {
@@ -90,4 +101,56 @@ char* cypherParameter(char inputCommand[], char inputParameter[])
     strcpy(inputParameter,temp);
     //fprintf(stdout,"Insanity check: %s\n",inputParameter);
     return inputParameter;
+}
+
+int sendOff(char parameter[],char path[],char commandInput[],user *temp)
+{
+    char fileLocation[256];
+    int returnValue;
+    strcpy(fileLocation,path);
+    strcat(fileLocation,commandInput);
+    strcat(fileLocation," ");
+    strcat(fileLocation,parameter);
+    //fprintf(stdout,"Insanity check: |%s|\n", fileLocation);
+    if(strcmp(commandInput,"textpalette")==0)
+    {
+        system(fileLocation);
+        if(strcmp(parameter,commandInput)!=0)
+            temp->userColor=atoi(parameter);
+        return 1;
+    }
+    else if(strcmp(commandInput,"backgroundpalette")==0)
+    {
+        system(fileLocation);
+        if(strcmp(parameter,commandInput)!=0)
+            temp->directoryColor=atoi(parameter);
+        return 1;
+    }
+    else if(strcmp(commandInput,"hello")==0)
+    {
+        strcat(fileLocation," ");
+        strcat(fileLocation,temp->userName);
+        system(fileLocation);
+        return 1;
+    }
+    else if(strcmp(commandInput,"login")==0)
+    {
+        system(fileLocation);
+        return 1;
+    }
+    else
+    {
+        system(fileLocation);
+        return 1;
+    }
+}
+
+user *createUser(char name[],char pass[],int currentUserIndex)
+{
+    user *temp=malloc(sizeof(user));
+    temp->userColor=15;
+    temp->directoryColor=15;
+    strcpy(temp->userName,name);
+    strcpy(temp->password,pass);
+    return temp;
 }
