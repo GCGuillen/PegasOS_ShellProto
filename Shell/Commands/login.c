@@ -6,7 +6,7 @@
 //	Last Edited By: Giancarlo Guillen (6/9/2020)
 #include <stdio.h>
 
-int main()
+int main(int argv, char **argc)
 {
     fprintf(stdout,"This is the login bin\n");
     return 1;

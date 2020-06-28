@@ -7,61 +7,50 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-
-// This is in development. Still looking at how to accomplish this task.
 
 struct stat sb;
-char response[256];
-int src_fd, dst_fd, n, err;
-unsigned char buffer[4096];
+char response[256],buffer[256],location[20];
+FILE *currentFile,*newFile;
+int startIndex=0;
 int main(int argv, char **argc)
 {
-    fprintf(stdout,"This is the copy bin\n");
-    fprintf(stdout,"Are you certain you want to copy %s into %s?\n[y]es\n[n]\n",argc[1],argc[2]);
-    fscanf(stdin,"%s",response);
-    if(strcmp("y",response)==0)
+    if (stat(argc[1], &sb) == 0 && S_ISREG(sb.st_mode))
     {
-        if (stat(argc[1], &sb) == 0 && S_ISREG(sb.st_mode))
+        if (stat(argc[2], &sb) == 0 && S_ISDIR(sb.st_mode))
         {
-            fprintf(stdout,"File %s exists!\n",argc[1]);
-            if (stat(argc[2], &sb) == 0 && S_ISDIR(sb.st_mode))
+            for(int i=0; i<strlen(argc[1]); i++)
             {
-                fprintf(stdout,"Directory %s exists!\n",argc[2]);
-                src_fd = open(argc[1], O_RDONLY);
-                dst_fd = open(argc[2], O_CREAT | O_WRONLY);
-                while (1) {
-                    err = read(src_fd, buffer, 4096);
-                    if (err == -1) {
-                        printf("Error reading file.\n");
-                        exit(1);
-                    }
-                    n = err;
-                    if (n == 0) break;
-                    err = write(dst_fd, buffer, n);
-                    if (err == -1) {
-                        printf("Error writing to file.\n");
-                        exit(1);
-                    }
-                }
-                close(src_fd);
-                close(dst_fd);
+                if(argc[1][i]=='/')
+                    startIndex=i+1;
             }
-            else
+            for(int i=startIndex,j=0;i<strlen(argc[1]);i++,j++)
             {
-                fprintf(stdout,"The directory does not exist!\n");
+                location[j]=argc[1][i];
+                if(i==strlen(argc[1]))
+                    location[j++]='\0';
             }
+            strcat(argc[2],location);
+            currentFile=fopen(argc[1],"r");
+            newFile=fopen(argc[2],"w");
+            while(fgets(buffer,sizeof(buffer),currentFile)!=NULL)
+            {
+                fputs(buffer,newFile);
+            }
+            fclose(currentFile);
+            fclose(newFile);
+            fprintf(stdout,"The %s file has been successfully copied over!\n",location);
+            //remove(argc[1]);
         }
         else
         {
-            fprintf(stdout,"File %s does not exist!\n",argc[1]);
+            fprintf(stdout,"The directory you which to copy to does not exist\n");
         }
+        
     }
-    else if(strcmp("n",response)==0)
+    else
     {
-        fprintf(stdout,"The file %s was not copied to the directory!\n",argc[1]);
+        fprintf(stdout,"The file you are trying to copy does not exist\n");
     }
+    
     return 1;
 }

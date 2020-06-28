@@ -91,7 +91,7 @@ char* cypherParameter(char inputCommand[], char inputParameter[])
     }
     for(int i=index,paramIndex=0;i<stringLength;i++,paramIndex++)
     {
-        temp[paramIndex]=tolower(inputCommand[i]);
+        temp[paramIndex]=inputCommand[i];
         if(inputCommand[i]=='\n')
         {
             temp[paramIndex]='\0';
