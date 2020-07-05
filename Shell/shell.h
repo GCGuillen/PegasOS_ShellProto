@@ -16,8 +16,6 @@
     #include <ctype.h>
     #include <unistd.h>
     #include <dirent.h>
-    
-    //#include "shellPrompt.c"
 
 	// This is how you do booleans in standard C
 	#ifndef bool
